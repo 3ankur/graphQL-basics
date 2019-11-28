@@ -1,11 +1,13 @@
 const graphql = require("graphql");
 const _ = require("lodash");
-const {GraphQLObjectType,GraphQLString,GraphQLSchema,GraphQLID } = graphql;
+const {GraphQLObjectType,GraphQLString,GraphQLSchema,GraphQLID,GraphQLList } = graphql;
 
-
+//3ankurv
 const books = [
     {id:"1",name:"The Javascript",genre:"Programming",authorId:"1"},
-    {id:"2",name:"5 Points Someone",genre:"Novel",authorId:2},
+    {id:"2",name:"5 Points Someone",genre:"Novel",authorId:"1"},
+    {id:"2",name:"5 Points Someone",genre:"Novel",authorId:"1"},
+    {id:"2",name:"5 Points Someone",genre:"Novel",authorId:"1"},
     {id:"3",name:"The Power of Positive Mind",genre:"Motivation",authorId:3}
 ];
 
@@ -37,7 +39,14 @@ const AuthorType = new GraphQLObjectType({
     fields:()=>({
         id:{type:GraphQLID},
         name:{type:GraphQLString},
-        age:{type:GraphQLString}
+        age:{type:GraphQLString},
+        books:{
+            type:new GraphQLList(BookType),
+            resolve:(parent,args)=>{
+                console.log(parent,args);
+                return _.filter(books,{authorId:parent.id})
+            }
+        }
     })
 });
 
@@ -57,6 +66,18 @@ const RootQuery = new GraphQLObjectType({
             args:{id:{type:GraphQLID}},
             resolve:(parent,args)=>{
                 return _.find(authors,{id:args.id})
+            }
+        },
+        books:{
+            type:new GraphQLList(BookType),
+            resolve:(parent,args)=>{
+                return books;
+            }
+        },
+        authors:{
+            type:new GraphQLList(AuthorType),
+            resolve:(parent,args)=>{
+                return authors;
             }
         }
         
